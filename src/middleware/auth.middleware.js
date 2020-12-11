@@ -1,9 +1,10 @@
 const errorTypes = require("../constants/error");
 const { getUserByName } = require("../service/user.service");
 const passwordToMd5 = require("../utils/crypto");
+const { verify } = require("../app/token");
 
 /**
- * 验证用户是否存在
+ * 验证登录
  */
 async function verifyLogin(ctx, next) {
     const { username, password } = ctx.request.body;
@@ -29,9 +30,26 @@ async function verifyLogin(ctx, next) {
         return;
     }
 
+    ctx.user = user;
+    await next();
+}
+
+/**
+ * 验证token授权
+ */
+async function verifyAuth(ctx, next) {
+    console.log("验证授权");
+    const token = ctx.request.header.authorization;
+    const user = verify(token);
+    if (!user) {
+        const error = new Error(errorTypes.NO_AUTHORIZATION);
+        return ctx.app.emit("error", error, ctx);
+    }
+    ctx.user = user;
     await next();
 }
 
 module.exports = {
     verifyLogin,
+    verifyAuth
 }
