@@ -9,21 +9,21 @@ class MomentService {
 
     async create(id, content) {
         const statement = "INSERT INTO moment (content, user_id) VALUES (?, ?)";
-        const result = await conn.execute(statement, [content, id]);
-        return result[0];
+        const [result] = await conn.execute(statement, [content, id]);
+        return result;
     }
 
     async getMomentById(id) {
         const statement = `${SELECT_SQL} WHERE m.id = ?;`;
-        const result = await conn.execute(statement, [id]);
+        const [result] = await conn.execute(statement, [id]);
         return result[0];
     }
 
     async getMomentList(pageNum, pageSize) {
         const offset = ((pageNum - 1) * pageSize).toString();
         const statement = `${SELECT_SQL} LIMIT ?, ?;`;
-        const result = await conn.execute(statement, [offset, pageSize]);
-        return result[0];
+        const [result] = await conn.execute(statement, [offset, pageSize]);
+        return result;
     }
 
     async update(momentId, content) {
