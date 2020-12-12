@@ -1,21 +1,41 @@
 const jwt = require("jsonwebtoken");
 const { PRIVATE_KEY, PUBLIC_KEY } = require("./config");
+const errorTypes = require("../constants/error");
 
 class TokenManager {
     sign(payload) {
-        return jwt.sign(payload, PRIVATE_KEY, {
-            algorithm: "RS256",
-            expiresIn: 60 * 60 * 24
-        });
+        let result = null;
+        try {
+            result = jwt.sign(payload, PRIVATE_KEY, {
+                algorithm: "RS256",
+                expiresIn: 60 * 60 * 24
+            });
+            return result;
+        } catch (error) {
+            console.error("TokenManager", error);
+            throw error;
+        }
     }
 
     verify(token) {
-        if (!token) return null;
+        if (!token) throw new Error(errorTypes.UNAUTHORIZED);
         token = token.replace("Bearer ", "");
-        return jwt.verify(token, PUBLIC_KEY, {
-            algorithms: ["RS256"]
-        });
-    }
+        let result = null;
+        try {
+            result = jwt.verify(token, PUBLIC_KEY, {
+                algorithms: ["RS256"]
+            });
+            return result;
+        } catch (error) {
+            console.log("TokenManager", error);
+            if (error.message === "jwt expired") {
+                throw new Error(errorTypes.TOKEN_EXPIRED);
+            } else {
+                throw error;
+            }
+        }
+    };
+
 }
 
 module.exports = new TokenManager();

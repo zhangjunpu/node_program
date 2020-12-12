@@ -15,11 +15,21 @@ const errorHandler = (err, ctx) => {
         case errorTypes.PASSWORD_IS_WRONG:
             ctx.body = new Result(10004, "密码错误");
             break;
-        case errorTypes.NO_AUTHORIZATION:
+        case errorTypes.UNAUTHORIZED:
             ctx.status = 401;
-            ctx.body = new Result(10005, "没有授权");
+            ctx.body = new Result(10010, "没有授权");
+            break;
+        case errorTypes.TOKEN_EXPIRED:
+            ctx.status = 401;
+            ctx.body = new Result(10011, "Token失效");
+            break;
+        case errorTypes.NO_PERMISSION:
+            ctx.status = 401;
+            ctx.body = new Result(10012, "没有权限");
             break;
         default:
+            ctx.status = 400;
+            ctx.body = new Result(10020, err.message);
             break;
     }
 }

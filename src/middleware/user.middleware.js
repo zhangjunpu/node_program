@@ -6,16 +6,14 @@ const verifyCreate = async (ctx, next) => {
     // 验证是否为null
     if (!username || !password) {
         const error = new Error(errorTypes.USERNAME_AND_PASSWORD_MUST_NOT_BE_NULL);
-        ctx.app.emit("error", error, ctx);
-        return;
+        return ctx.app.emit("error", error, ctx);
     }
 
     // 验证用户是否存在
     const result = await getUserByName(username);
     if (result) {
         const error = new Error(errorTypes.USER_ALREADY_EXISTS);
-        ctx.app.emit("error", error, ctx);
-        return;
+        return ctx.app.emit("error", error, ctx);
     }
 
     await next();

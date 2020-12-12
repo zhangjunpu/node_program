@@ -1,12 +1,14 @@
 const Router = require("koa-router");
 
-const { verifyAuth } = require("../middleware/auth.middleware");
-const { create, getMomentById, getMomentList } = require("../controller/moment.controller.js");
+const { verifyAuth, verifyPermission } = require("../middleware/auth.middleware");
+const { create, find, list, update, remove } = require("../controller/moment.controller.js");
 
 const router = new Router({ prefix: "/moment" });
 
-router.post("/create", verifyAuth, create);
-router.get("/:momentId", verifyAuth, getMomentById);
-router.get("/", verifyAuth, getMomentList);
+router.post("/", verifyAuth, create);
+router.get("/", verifyAuth, list);
+router.get("/:momentId", verifyAuth, find);
+router.patch("/:momentId", verifyAuth, verifyPermission, update);
+router.delete("/:momentId", verifyAuth, verifyPermission, remove);
 
 module.exports = router;
