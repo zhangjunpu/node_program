@@ -19,11 +19,18 @@ class CommentService {
         return result;
     }
 
+    async reply(content, momentId, userId, commentId) {
+        console.log(content, momentId, userId, commentId);
+        const statement = "INSERT INTO comment (content, moment_id, user_id, comment_id) VALUES (?, ?, ?, ?)";
+        const [result] = await conn.execute(statement, [content, momentId, userId, commentId]);
+        return result;
+    }
+
     async getCommentsByMomentId(momentId) {
 
     }
 
-    
+
 }
 
 module.exports = new CommentService();

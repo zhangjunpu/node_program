@@ -29,10 +29,9 @@ class TokenManager {
         } catch (error) {
             console.log("TokenManager", error);
             if (error.message === "jwt expired") {
-                throw new Error(errorTypes.TOKEN_EXPIRED);
-            } else {
-                throw error;
+                error = new Error(errorTypes.TOKEN_EXPIRED);
             }
+            throw error;
         }
     };
 

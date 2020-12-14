@@ -22,6 +22,16 @@ class CommentController {
         ctx.body = new Result(null, null, result);
     }
 
+    async reply(ctx, next) {
+        console.log("回复评论");
+        const { content, momentId } = ctx.request.body;
+        const userId = ctx.user.id;
+        const { commentId } = ctx.params;
+        const result = await service.reply(content, momentId, userId, commentId);
+        console.log(result);
+        ctx.body = new Result(null, null, result);
+    }
+
     async getCommentsByMomentId(ctx, next) {
 
     }
