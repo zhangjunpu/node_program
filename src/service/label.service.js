@@ -14,10 +14,10 @@ class LabelService {
         return result;
     }
 
-    async getLabels(pageNum, pageSize) {
-        const page = getPage(pageNum, pageSize);
+    async getLabels(page, pageSize) {
+        const offset = getPage(page, pageSize);
         const statement = "SELECT * FROM label LIMIT ?, ?";
-        const [result] = await conn.execute(statement, [page, pageSize]);
+        const [result] = await conn.execute(statement, [offset, pageSize]);
         return result;
     }
 }

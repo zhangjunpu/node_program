@@ -19,8 +19,8 @@ class MonentController {
 
     async list(ctx, next) {
         console.log("moment getMomentList");
-        const { pageNum, pageSize } = ctx.query;
-        const result = await service.getMomentList(pageNum, pageSize);
+        const { page, pageSize } = ctx.query;
+        const result = await service.getMomentList(page, pageSize);
         ctx.body = new Result(null, null, result);
     }
 

@@ -3,8 +3,8 @@ const service = require("../service/label.service");
 
 class LabelController {
     async getLabels(ctx, next) {
-        const { pageNum, pageSize } = ctx.request.query;
-        const result = await service.getLabels(pageNum, pageSize);
+        const { page, pageSize } = ctx.request.query;
+        const result = await service.getLabels(page, pageSize);
         ctx.body = new Result(null, null, result);
     }
 }
