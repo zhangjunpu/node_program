@@ -12,6 +12,18 @@ class FileService {
         const [result] = await conn.execute(statement, [userId]);
         return result[0];
     }
+
+    async uploadMomentPicture(filename, mimetype, size, userId, momentId) {
+        const statement = "INSERT INTO file (filename, mimetype, size, user_id, moment_id) VALUES (?, ?, ?, ?, ?);";
+        const [result] = await conn.execute(statement, [filename, mimetype, size, userId, momentId]);
+        return result;
+    }
+
+    async getFileInfo(filename) {
+        const statement = 'SELECT * FROM file WHERE filename = ?';
+        const [result] = await conn.execute(statement, [filename]);
+        return result[0];
+    }
 }
 
 module.exports = new FileService();

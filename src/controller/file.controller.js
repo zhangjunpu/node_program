@@ -15,6 +15,19 @@ class FileController {
 
         ctx.body = new Result(null, "头像上传成功");
     }
+
+    async saveMomentPicture(ctx, next) {
+        console.log("保存动态配图");
+        const userId = ctx.user.id;
+        const { momentId } = ctx.req.body;
+        const files = ctx.req.files;
+        for (const file of files) {
+            const { filename, mimetype, size } = file;
+            await fileService.uploadMomentPicture(filename, mimetype, size, userId, momentId);
+        }
+
+        ctx.body = new Result(null, "图片上传成功");
+    }
 }
 
 module.exports = new FileController();
