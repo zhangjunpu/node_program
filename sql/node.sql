@@ -2,6 +2,7 @@ CREATE TABLE IF NOT EXISTS user (
 	id INT PRIMARY KEY AUTO_INCREMENT,
 	name VARCHAR(30) NOT NULL UNIQUE,
 	password VARCHAR(50) NOT NULL,
+	avatar VARCHAR(300),
 	createAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	updateAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
@@ -45,36 +46,68 @@ CREATE TABLE IF NOT EXISTS moment_label (
 	FOREIGN KEY (label_id) REFERENCES label(id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
+CREATE TABLE IF NOT EXISTS avatar (
+	id INT PRIMARY KEY AUTO_INCREMENT,
+	filename VARCHAR(255) NOT NULL UNIQUE,
+	mimetype VARCHAR(30),
+	size INT,
+	user_id INT,
+	createAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	updateAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+	FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS file (
+	id INT PRIMARY KEY AUTO_INCREMENT,
+	filename VARCHAR(255) NOT NULL UNIQUE,
+	mimetype VARCHAR(30),
+	size INT,
+	user_id INT,
+	moment_id INT,
+	createAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	updateAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+	FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE CASCADE ON UPDATE CASCADE,
+	FOREIGN KEY (moment_id) REFERENCES moment(id) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
 INSERT INTO moment (content, user_id) VALUES (？, ？);
 
+SELECT * FROM file WHERE filename = '95aeefe951d5c41aaa3fdba7dddcdf02';
+
 SELECT 
-	m.id, m.content, m.createAt, m.updateAt, 
-	JSON_OBJECT("id", u.id, "name", u.name) user, 
-	IF(COUNT(c.id),JSON_ARRAYAGG(
-		JSON_OBJECT("id", c.id, "content", c.content, "commentId", c.comment_id, 
-		"user", JSON_OBJECT("id", cu.id, "name", cu.name))
-	),JSON_ARRAY()) comments,
-	IF(COUNT(l.id),JSON_ARRAYAGG(
-		JSON_OBJECT("id", l.id, "name", l.name)
-	),NULL) labels
+		m.id, m.content, m.createAt, m.updateAt, 
+		JSON_OBJECT("id", u.id, "name", u.name, "avatar", u.avatar) user, 
+		IF(COUNT(l.id),JSON_ARRAYAGG(
+				JSON_OBJECT("id", l.id, "name", l.name)
+		),NULL) labels,
+		(SELECT JSON_ARRAYAGG(JSON_OBJECT("id", c.id, "content", c.content, "commentId", c.comment_id, 
+						"user", JSON_OBJECT("id", cu.id, "name", cu.name, "avatar", cu.avatar))) FROM comment c 
+						LEFT JOIN user cu ON c.user_id = cu.id 
+						WHERE c.moment_id = m.id ) comments
 FROM moment m 
 LEFT JOIN user u ON m.user_id = u.id 
-LEFT JOIN comment c ON m.id = c.moment_id 
-LEFT JOIN user cu ON c.user_id = cu.id 
 LEFT JOIN moment_label ml ON m.id = ml.moment_id
 LEFT JOIN label l ON ml.label_id = l.id 
 WHERE m.id = 3
 GROUP BY m.id;
 
 SELECT 
-	m.id, m.content, m.createAt, m.updateAt, 
-	JSON_OBJECT("id", u.id, "name", u.name) user,
-	(SELECT COUNT(*) FROM comment c WHERE c.moment_id = m.id) commentCount,
-	(SELECT COUNT(*) FROM moment_label ml WHERE m.id = ml.moment_id) labelCount
+		m.id, m.content, m.createAt, m.updateAt, 
+		JSON_OBJECT("id", u.id, "name", u.name) user,
+		COUNT(l.id) labelCount,
+		(SELECT COUNT(*) FROM comment c WHERE c.moment_id = m.id) commentCount 
 FROM moment m 
 LEFT JOIN user u ON m.user_id = u.id 
+LEFT JOIN moment_label ml ON m.id = ml.moment_id 
+LEFT JOIN label l ON ml.label_id = l.id 
 GROUP BY m.id
 LIMIT 0, 10;
+
+SELECT
+	u.id, u.name, a.filename, a.mimetype, a.size
+FROM user u
+LEFT JOIN avatar a ON u.id = a.user_id
+WHERE u.id = 1;
 
 
 INSERT INTO moment (content, user_id) VALUES ('纵然再苦守数百年 我的心意 始终如一', 1);
