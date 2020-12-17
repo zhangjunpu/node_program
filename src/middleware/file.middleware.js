@@ -1,5 +1,5 @@
 const multer = require('koa-multer');
-const { AVATAR_PATH } = require('../constants/upload.path');
+const { AVATAR_PATH } = require('../constants/file.path');
 
 const upload = multer({ dest: AVATAR_PATH });
 

@@ -5,6 +5,8 @@ const path = require("path");
 dotenv.config();
 
 module.exports = {
+    APP_HOST,
+    APP_PORT,
     DB_HOST,
     DB_PORT,
     DB_DATABASE,

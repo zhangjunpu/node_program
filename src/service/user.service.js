@@ -14,15 +14,15 @@ class UserService {
     }
 
     async getUserInfo(userId) {
-        const statement = `
-            SELECT
-                u.id, u.name, a.filename, a.mimetype, a.size
-            FROM user u
-            LEFT JOIN avatar a ON u.id = a.user_id
-            WHERE u.id = ?;
-    `;
+        const statement = `SELECT id, name FROM user WHERE id = ?;`;
         const [result] = await conn.execute(statement, [userId]);
         return result[0];
+    }
+
+    async updateUserAvatar(avatar, userId) {
+        const statement = `UPDATE user SET avatar = ? WHERE id = ?`;
+        const [result] = await conn.execute(statement, [avatar, userId]);
+        return result;
     }
 }
 
