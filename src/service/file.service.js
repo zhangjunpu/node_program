@@ -7,9 +7,9 @@ class FileService {
         return result;
     }
 
-    async getAvatar(userId) {
-        const statement = `SELECT * FROM avatar WHERE user_id = ?;`;
-        const [result] = await conn.execute(statement, [userId]);
+    async getAvatar(filename) {
+        const statement = `SELECT * FROM avatar WHERE filename = ?;`;
+        const [result] = await conn.execute(statement, [filename]);
         return result[0];
     }
 

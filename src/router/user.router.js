@@ -7,6 +7,6 @@ const router = new Router({ prefix: "/user" });
 
 router.post("/", verifyCreate, create);
 router.get("/info", verifyAuth, getUserInfo);
-router.get("/:userId/avatar", getUserAvatar)
+router.get("/avatar/:filename", getUserAvatar)
 
 module.exports = router;

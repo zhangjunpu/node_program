@@ -10,7 +10,7 @@ class FileController {
         const { filename, mimetype, size } = ctx.req.file;
         await fileService.uploadAvatar(filename, mimetype, size, userId);
 
-        const avatar = `${APP_HOST}:${APP_PORT}/user/${userId}/avatar`;
+        const avatar = `${APP_HOST}:${APP_PORT}/user/avatar/${filename}`;
         await userService.updateUserAvatar(avatar, userId);
 
         ctx.body = new Result(null, "头像上传成功");

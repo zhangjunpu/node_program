@@ -18,8 +18,8 @@ class UserController {
     }
 
     async getUserAvatar(ctx, next) {
-        const { userId } = ctx.params;
-        const { filename, mimetype, size } = await fileService.getAvatar(userId);
+        const { filename } = ctx.params;
+        const { mimetype, size } = await fileService.getAvatar(filename);
         ctx.response.set("content-type", mimetype);
         ctx.response.set("content-size", size);
         ctx.body = fs.createReadStream(path.resolve(AVATAR_PATH, filename));
