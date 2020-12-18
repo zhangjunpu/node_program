@@ -45,8 +45,8 @@ class MonentController {
     }
 
     async labels(ctx, next) {
-        const { momentId } = ctx.params;
         console.log("给动态加标签");
+        const { momentId } = ctx.params;
         for (const { id } of ctx.labels) {
             // 1. 查看当前用户是否拥有此标签
             const hasLabel = await momentService.hasLabel(momentId, id);
@@ -58,10 +58,21 @@ class MonentController {
         ctx.body = new Result(null, "添加标签成功");
     }
 
+    /**
+     * 获取动态图片
+     */
     async getPicture(ctx, next) {
-        const { filename } = ctx.params;
+        console.log("获取动态配图");
+        let { filename } = ctx.params;
+        const resize = ctx.query.size;
         const { mimetype, size } = await fileService.getFileInfo(filename);
-        console.log(filename, mimetype, size);
+        if (resize === '1280') {
+            filename += "-large";
+        } else if (resize === '640') {
+            filename += "-middle";
+        } else if (resize === '320') {
+            filename += "-small";
+        }
         ctx.response.set('content-type', mimetype);
         ctx.response.set('content-size', size);
         ctx.body = fs.createReadStream(path.resolve(FILE_PATH, filename));
