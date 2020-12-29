@@ -1,5 +1,6 @@
 const conn = require("../app/database");
 const { getPage } = require("../utils/page");
+const { APP_HOST, APP_PORT } = require("../app/config");
 
 class MomentService {
 
@@ -21,7 +22,7 @@ class MomentService {
                     JSON_OBJECT("id", c.id, "content", c.content, "commentId", c.comment_id, "user", 
                     JSON_OBJECT("id", cu.id, "name", cu.name, "avatar", cu.avatar)))
                 FROM comment c LEFT JOIN user cu ON c.user_id = cu.id WHERE m.id = c.moment_id) comments,
-                (SELECT JSON_ARRAYAGG(CONCAT("http://localhost:8000/moment/image/", f.filename)) 
+                (SELECT JSON_ARRAYAGG(CONCAT("${APP_HOST}:${APP_PORT}/moment/image/", f.filename)) 
                 FROM file f WHERE f.moment_id = m.id) images
             FROM moment m 
             LEFT JOIN user u ON m.user_id = u.id 
