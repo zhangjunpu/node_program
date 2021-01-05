@@ -13,17 +13,18 @@ class UserService {
         return result[0];
     }
 
-    async getUserInfo(userId) {
-        const statement = `SELECT id, name FROM user WHERE id = ?;`;
-        const [result] = await conn.execute(statement, [userId]);
-        return result[0];
-    }
-
     async updateUserAvatar(avatar, userId) {
         const statement = `UPDATE user SET avatar = ? WHERE id = ?`;
         const [result] = await conn.execute(statement, [avatar, userId]);
         return result;
     }
+
+    async getUserInfo(userId) {
+        const statement = `SELECT id, name, avatar FROM user WHERE id = ?;`;
+        const [result] = await conn.execute(statement, [userId]);
+        return result[0];
+    }
+
 }
 
 module.exports = new UserService();

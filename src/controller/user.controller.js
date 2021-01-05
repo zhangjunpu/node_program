@@ -6,7 +6,6 @@ const fileService = require("../service/file.service");
 const Result = require("../app/result");
 const passwordToMd5 = require("../utils/crypto");
 const { AVATAR_PATH } = require('../constants/file.path');
-const { getAvatarUrl } = require("../utils/image");
 
 class UserController {
     async create(ctx, next) {
@@ -27,9 +26,8 @@ class UserController {
 
     async getUserInfo(ctx, next) {
         const userId = ctx.user.id;
-        const { id, name } = await userService.getUserInfo(userId);
-        const avatar = getAvatarUrl(id);
-        ctx.body = new Result(null, null, { id, name, avatar })
+        const user = await userService.getUserInfo(userId);
+        ctx.body = new Result(null, null, user)
     }
 
 }
