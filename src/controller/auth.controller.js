@@ -11,7 +11,7 @@ class AuthController {
         } catch (error) {
             ctx.app.emit("error", error, ctx);
         }
-        const result = { id, name, avatar, token };
+        const result = { user: { id, name, avatar }, token };
         ctx.body = new Result(null, "用户登录成功", result);;
     }
 }
